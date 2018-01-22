@@ -643,7 +643,7 @@ int getCost(int cardNumber)
   return -1;
 }
 
-int adventurerEffect(int drawntreasure, struct gameState *state, int currentPlayer, int cardDrawn, int temphandCounter, int temphand) {
+int adventurerEffect(int drawntreasure, struct gameState *state, int currentPlayer, int cardDrawn, int temphandCounter, int temphand []) {
 	
 	while (drawntreasure <= 2) {
 		if (state->deckCount[currentPlayer] <= 1) {//if the deck is empty we need to shuffle discard and add to deck
@@ -666,10 +666,10 @@ int adventurerEffect(int drawntreasure, struct gameState *state, int currentPlay
 	return 0;
 }
 
-int smithyEffect(int currentPlayer, struct gameState *state, int handPos) {
+int smithyEffect(int currentPlayer, struct gameState *state, int handPos, int i) {
 	
 	//+3 Cards
-	for (int i = 1; i < 3; i++)
+	for (i = 1; i < 3; i++)
 	{
 		drawCard(currentPlayer, state);
 	}
@@ -702,7 +702,7 @@ int villageEffect(int currentPlayer, struct gameState *state, int handPos) {
 	return 0;
 }
 
-int embargoEffect(int currentPlayer, struct gameState *state, int handPos) {
+int embargoEffect(int currentPlayer, struct gameState *state, int handPos, int choice1) {
 	//+2 Coins
 	state->coins = state->coins + 2;
 
@@ -891,7 +891,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
 		
     case smithy:
 
-		return smithyEffect(currentPlayer, state, handPos);
+		return smithyEffect(currentPlayer, state, handPos, i);
 		
     case village:
 
@@ -1186,7 +1186,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
 
 		
     case embargo: 
-		return embargoEffect(currentPlayer, state, handPos);
+		return embargoEffect(currentPlayer, state, handPos, choice1);
 		
     case outpost:
 		return outpostEffect(currentPlayer, state, handPos);
