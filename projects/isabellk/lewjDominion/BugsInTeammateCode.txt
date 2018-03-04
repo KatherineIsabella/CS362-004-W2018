@@ -1,0 +1,114 @@
+----- BUG 1 -----
+
+Title: After being played, the village card is not discarded
+
+Summary: After the village card is played and the function villageCardEffect occurs, the village card is not discarded as it should be. This bug was found in both a targeted unit test as well as 10,000 random tests. The bug occurred in all 10,001 tests.
+
+How to Reproduce: This bug can be reproduced every time the village card is played, using any input that makes sense for the dominion game implemented. The bug was reproduced every time in 10,000 random tests, which means any input to the villageCardEffect function is likely to cause the bug. A step-by-step example of how to reproduce is:
+1. Create and initialize a new game state
+2. Set the current player to 0
+3. Set the current player's handcount to 1
+4. Set the current player's discard and deck count to 0
+5. Give the current player's hand the village card
+6. Play the village card
+7. Check to see if the current player now has 0 cards in their hand and 1 in their discard
+8. If they the card is still in their hand or if the card is now not in their discard, then there is a bug
+
+A code example I have from a unit test is:
+	printf("\n\nTEST 7: CHECK TO MAKE SURE THE VILLAGE CARD IS DISCARDED");
+
+	memset(&currentGame, 23, sizeof(struct gameState));   // clear the game state
+	initializeGame(numPlayer, k, seed, &currentGame);
+
+	currentPlayer = 0;
+	currentGame.handCount[currentPlayer] = 1;
+	handCount == 1;
+	currentGame.discardCount[currentPlayer] = 0;
+	discardCount = 0;
+	currentGame.deckCount[currentPlayer] = 0;
+	deckCount = 0;
+
+	currentGame.hand[currentPlayer][0] = village;
+
+	properReturn = villageCardEffect(currentPlayer, &currentGame, 0);
+
+	//checks to make sure the card is discarded after used
+	if (properReturn == 0 && currentGame.handCount[currentPlayer] == handCount - 1 && currentGame.discardCount[currentPlayer] == discardCount + 1) {
+		printf( "\n----TEST PASSED----  THE CARD WAS PROPERLY DISCARDED");
+	}
+	else {
+		printf( "\n----TEST FAILED----  THE CARD WAS NOT PROPERLY DISCARDED");
+		testsFailed++;
+	}
+
+Version of Software: This bug was detected on jlew's assignment-2 dominion code running on the oregon state flip3 server using PUTTY.
+
+Severity: Major - According to the rules of dominion, the village card must be discarded after being played. Not discarding the card could allow the player to enter a loop of spamming the village card (due to the +2 Actions) until they have all their cards in their deck as many actions as they want.
+
+Priority: High - Many players are likely to use the village card in their games and all of those games would be effected by this bug.
+
+
+----- BUG 2 -----
+
+Title: When played, the smithy card does not draw three cards from the player's hand.
+
+Summary: When the smithy card is played, three cards are not drawn from the players hand even though the dominion rules specify they should be. This bug was found in a unit test, specifically testing if the three cards are drawn after playing the smithy card. Further testing showed the player is gaining four cards, not three, when the smithy card is played.
+
+How to Reproduce: This bug can be reproduced by following the step-by-step example:
+1. Create and initialize a new game state
+2. Set the current player to 0
+3. Set the current player's handcount, deckcount, and discardcount to 5
+4. Give the player 5 random cards in their hand, deck, and discard piles (within the game rules -> so their hand must have at least 1  smithy card, and the only kingdom cards they can have are the 10 you initialize the game with)
+5. Play the smithy card
+6. Check to see if the current player now has 3 cards from the deck in their hand.
+7. If the player has more or less than 3 cards from the deck now in their hand, then the smithy card is not working properly.
+
+A code example I have from a unit test is:
+	printf("\n\nTEST 2: THREE CARDS ARE DRAWN FROM THE PLAYER'S HAND");
+
+	memset(&currentGame, 23, sizeof(struct gameState));   // clear the game state
+	initializeGame(numPlayer, k, seed, &currentGame);
+	currentGame.handCount[currentPlayer] = handCount;
+	currentGame.discardCount[currentPlayer] = discardCount;
+	currentGame.deckCount[currentPlayer] = deckCount;
+
+
+	//sets up what cards are in the player's hand/deck/discard
+	currentGame.hand[currentPlayer][0] = feast;
+	currentGame.hand[currentPlayer][1] = smithy;
+	currentGame.hand[currentPlayer][2] = village;
+	currentGame.hand[currentPlayer][3] = curse;
+	currentGame.hand[currentPlayer][4] = feast;
+
+	currentGame.deck[currentPlayer][0] = copper;
+	currentGame.deck[currentPlayer][1] = silver;
+	currentGame.deck[currentPlayer][2] = village;
+	currentGame.deck[currentPlayer][3] = mine;
+	currentGame.deck[currentPlayer][4] = curse;
+
+
+	currentGame.discard[currentPlayer][0] = mine;
+	currentGame.discard[currentPlayer][1] = feast;
+	currentGame.discard[currentPlayer][2] = gold;
+	currentGame.discard[currentPlayer][3] = treasure_map;
+	currentGame.discard[currentPlayer][4] = sea_hag;
+
+	//calls smithyEffect
+	properReturn = smithyCardEffect(currentPlayer, &currentGame, 1);
+
+
+	//checks to make sure 3 cards are moved from the deck to the hand - handCount only goes up by 2 because smithy is moved to the playedCards pile
+	if (properReturn == 0 && (currentGame.deckCount[currentPlayer] == deckCount - 3) && (currentGame.handCount[currentPlayer] == handCount + 2)) {
+		printf( "\n----TEST PASSED----  THE PLAYER GAINED THREE CARDS FROM THEIR DECK AND SMITHY MOVED TO THE PLAYEDCARDS PILE");
+	}
+	else {
+		printf( "\n----TEST FAILED----  THE PLAYER DID NOT GAIN THREE CARDS");
+		testsFailed++;
+	}
+
+Version of Software: This bug was detected on jlew's assignment-2 dominion code running on the oregon state flip3 server using PUTTY.
+
+Severity: Medium - According to the rules of dominion, the smithy card should only give 3 cards after being played, not 4. The bug gives the player an additional card, but it will not easily grant the player a win. 
+
+Priority: High - Many players are likely to use the smithy card in their games and all of those games would be effected by this bug.
+
