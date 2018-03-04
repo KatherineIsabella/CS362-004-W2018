@@ -168,6 +168,9 @@ int main() {
 			j++;
 		}
 
+		//assign a random number of actions
+		currentGame.numActions = floor(Random() * 100);
+
 		//call the villageTests with our random data
 		villageTests(currentPlayer, &currentGame, &failures, villagePos);
 		i++;
