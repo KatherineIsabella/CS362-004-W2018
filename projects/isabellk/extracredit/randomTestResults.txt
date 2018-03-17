@@ -1,0 +1,6 @@
+Completed 100000 Random Tests
+
+Scheme and Host fails: 18
+Added query75020 times. Query fails: 251 Only query fails: 101
+Added path74846 times. Path fails: 190 Only path fails: 41
+Added port number75069 times. Port fails: 245 Only port fails: 0
